@@ -52,7 +52,7 @@ def XGboost_recommend2(arr,gender,age,tidal,temperature):
     tree_deep = 100 #可理解成epoch
     learning_rate = 0.3
     
-    Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/penghu_orignal2_sustainable.csv',encoding='utf-8-sig')
+    Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/penghu_orignal2.csv',encoding='utf-8-sig')
     df_data = pd.DataFrame(data= np.c_ [Data['weather'], Data['gender'], Data['age'] ,Data['tidal'],Data['temperature'],Data['設置點']],
                            columns= ['weather','gender','age','tidal','temperature','label'])
     #轉換文字要做one-hot encode前要先做label encode
@@ -80,7 +80,7 @@ def XGboost_recommend2(arr,gender,age,tidal,temperature):
     
     xgboostModel = XGBClassifier(n_estimators=tree_deep, learning_rate= learning_rate)
     xgboostModel.fit(X_train, Y_train)
-    xgboostModel.save_model('PHtest.bin')
+    # xgboostModel.save_model('PHtest.bin')
     predicted = xgboostModel.predict([final[0]])
     print('訓練集Accuracy: %.2f%% ' % (xgboostModel.score(X_train,Y_train) * 100.0))
     #predicted = xgboostModel.predict([X_test])

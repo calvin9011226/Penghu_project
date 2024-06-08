@@ -48,7 +48,7 @@ def XGboost_recommend2(arr,gender,age,tidal,temperature):
     le = LabelEncoder()
     labelencoder = LabelEncoder()
 
-    Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/penghu_orignal2_sustainable.csv',encoding='utf-8-sig')
+    Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/penghu_orignal2.csv',encoding='utf-8-sig')
     df_data = pd.DataFrame(data= np.c_ [Data['weather'], Data['gender'], Data['age'] ,Data['tidal'],Data['temperature'],Data['設置點']],
                            columns= ['weather','gender','age','tidal','temperature','label'])
         
@@ -73,7 +73,7 @@ def XGboost_recommend2(arr,gender,age,tidal,temperature):
     final=onehotencoder.transform([Value_arr])#用同一個onehotencoder能transform到一樣的編碼
     # print(final)
     loaded_model = XGBClassifier()
-    loaded_model.load_model('PHtest.bin')
+    loaded_model.load_model('xgb_model2.bin')
     predicted = loaded_model.predict(final)
     #print(predicted)
     result = le.inverse_transform(predicted)
