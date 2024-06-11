@@ -54,13 +54,13 @@ def linebot():
         if type=='text':
             msg = json_data['events'][0]['message']['text']  # 取得 LINE 收到的文字訊息
             #功能1
-            if msg == "行程規劃":
+            if msg == "行程規劃"or msg =="6":
                 print(msg)
                 # line_bot_api.reply_message(tk,TextSendMessage(msg)) # 回傳訊息
                 # line_bot_api.reply_message(tk,TextSendMessage("請選擇您的行程規劃天數，將以大數據推薦行程"))
                 line_bot_api.reply_message(tk,[TextSendMessage("請選擇您的行程規劃天數，將以大數據推薦行程"),FlexMessage.travel_reply("行程規劃","兩天一夜","兩天一夜","兩天一夜","三天兩夜","三天兩夜","三天兩夜","四天三夜","四天三夜","四天三夜","五天四夜","五天四夜","五天四夜")])               
             #功能2
-            elif msg == "景點推薦":
+            elif msg == "景點推薦"or msg =="2":
                 print(msg)
                 weather = Now_weather.weather()
                 temperature = Now_weather.temperature()
@@ -95,11 +95,11 @@ def linebot():
                                                  ])
                 '''                                 
             #功能3
-            elif msg == "景點人潮":
+            elif msg == "景點人潮"or msg=="3":
                 print(msg)
                 line_bot_api.reply_message(tk, [TextSendMessage("請點選以下網址，將由大數據為您分析這時間的人潮"),TextSendMessage(str(PHP_ngrok)+"/PengHu_crowd2.php")])
             #功能4
-            elif msg == "附近搜尋":
+            elif msg == "附近搜尋"or msg =="4":
                 print(msg)
                 line_bot_api.reply_message(tk,FlexMessage.ask_location())
             elif msg == "餐廳" or msg == "停車場" or msg == "住宿":
@@ -125,7 +125,7 @@ def linebot():
             #     line_bot_api.reply_message(tk, TextSendMessage(reply))
                 
             #功能6
-            elif msg == "收集資料&修改資料":
+            elif msg == "搜集資料&修改資料"or msg=="1":
                 print(msg)
                 line_bot_api.reply_message(tk,TextSendMessage("請輸入你的年紀"))
                 approveAgeRespond=True
@@ -220,12 +220,13 @@ def handle_postback(event):
             line_bot_api.reply_message(event.reply_token, [TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的五天四夜行程"),TextSendMessage(str(PHP_ngrok)+"/PengHu_plan.php")])
     elif postback_data=="男" or postback_data=="女" or postback_data=="其他":
 
-            gender=postback_data
-            gender=FlexMessage.classify_gender(gender)
+            # gender=postback_data
+            # gender=FlexMessage.classify_gender(gender)
             global gender_1 #測試用
-            gender_1=FlexMessage.classify_gender(gender)#測試用
-            print(gender)
-            line_bot_api.reply_message(event.reply_token,TextSendMessage("資料儲存完畢"))
+            gender_1=postback_data
+            gender_1=FlexMessage.classify_gender(gender_1)#測試用
+            # print(gender_1)
+            line_bot_api.reply_message(event.reply_token,TextSendMessage("資料儲存完畢\n請根據您的需求輸入2~6,來獲得相對應的功能:\n2.景點推薦\n3.景點人潮\n4.附近搜尋\n5.租車\n6.行程規劃"))
             print("結束使用\"收集資料功能\" \n------------------")
     if postback_data=="需要幫助" :
         reply_array=[]
