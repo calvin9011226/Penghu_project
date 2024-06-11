@@ -113,7 +113,7 @@ def linebot():
                 line_bot_api.reply_message(tk, [TextSendMessage("請點選以下網址，將為您推薦附近景點"),TextSendMessage(str(PHP_ngrok)+"/attration_not_trainning.php")])
 
             #功能5
-            elif msg == "租車":
+            elif msg == "租車" or msg =="5":
                 line_bot_api.reply_message(tk, [TextSendMessage("請點選以下網址，將為您推薦租車店家"),TextSendMessage(str(PHP_ngrok)+"/car_rent.php")])
 
             # # 測試用
