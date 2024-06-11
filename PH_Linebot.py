@@ -152,7 +152,7 @@ def linebot():
             else :
                 print(msg)                                       # 印出內容
                 reply = msg
-                line_bot_api.reply_message(tk,TextSendMessage(reply))# 回傳訊息
+                # line_bot_api.reply_message(tk,TextSendMessage(reply))# 回傳訊息
         
         if type=='location':
             add = json_data['events'][0]['message']['address']  # 取得 LINE 收到的文字訊息
