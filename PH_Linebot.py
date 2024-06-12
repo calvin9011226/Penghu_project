@@ -78,7 +78,24 @@ def linebot():
                 #recommend = "掌上明珠"
                 print(recommend) #推薦的地點是從XGBOOST_predicted來的
                 recommend_website,recommend_imgur,recommend_map = PH_Attractions.Attractions_recommend(recommend)#圖片,網址,map是從PH_Attractions來的
-                #print(recommend_website,recommend_imgur,recommend_map)
+                print(recommend_website,recommend_imgur,recommend_map)
+                line_bot_api.reply_message(tk,[TextSendMessage("感謝等待\n系統以AI大數據機器學習的方式推薦以下適合您的地點"),
+                                                      TextSendMessage(str(recommend)),
+                                                      ImageSendMessage(original_content_url=str(recommend_imgur)+".jpg",preview_image_url=str(recommend_imgur)+".jpg"),
+                                                      TextSendMessage(recommend_website),
+                                                      TextSendMessage(recommend_map)
+                                                      ])
+            elif msg == "永續觀光"or msg =="2-1":#測試功能
+                print(msg)
+                weather = Now_weather.weather()
+                temperature = Now_weather.temperature()
+                arr = np.array([weather])
+                tidal = Now_weather.tidal()
+                age = randrange(15,55)
+                print(arr,gender_1,age_1,tidal,temperature)
+                recommend = XGBOOST_predicted.XGboost_recommend3(arr,gender_1,age_1,tidal,temperature)
+                print(recommend) #推薦的地點是從XGBOOST_predicted來的
+                recommend_website,recommend_imgur,recommend_map = PH_Attractions.Attractions_recommend1(recommend)#圖片,網址,map是從PH_Attractions來的
                 line_bot_api.reply_message(tk,[TextSendMessage("感謝等待\n系統以AI大數據機器學習的方式推薦以下適合您的地點"),
                                                       TextSendMessage(str(recommend)),
                                                       ImageSendMessage(original_content_url=str(recommend_imgur)+".jpg",preview_image_url=str(recommend_imgur)+".jpg"),
