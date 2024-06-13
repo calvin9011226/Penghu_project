@@ -25,6 +25,9 @@ XAMPP要開apache
 注意一下GOOGLE API
 https://console.cloud.google.com/apis/credentials/key/eb1003ac-b315-45f8-be26-63c7868072f2?authuser=1&hl=zh-tw&project=learned-cirrus-400702
 
+note:
+要修改php記得要去C:\xampp\htdocs 裡面改
+
 
 
 

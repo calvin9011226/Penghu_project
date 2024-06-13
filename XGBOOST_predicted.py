@@ -84,7 +84,7 @@ def XGboost_recommend3(arr,gender,age,tidal,temperature):
     le = LabelEncoder()
     labelencoder = LabelEncoder()
 
-    Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/penghu_orignal2_sustainable.csv',encoding='utf-8-sig')
+    Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/generated_data_updated1.csv',encoding='utf-8-sig')
     df_data = pd.DataFrame(data= np.c_ [Data['weather'], Data['gender'], Data['age'] ,Data['tidal'],Data['temperature'],Data['設置點']],
                            columns= ['weather','gender','age','tidal','temperature','label'])
         
@@ -92,7 +92,7 @@ def XGboost_recommend3(arr,gender,age,tidal,temperature):
 
     X = df_data.drop(labels=['label'],axis=1).values # 移除label並取得剩下欄位資料
 
-    onehotencoder = OneHotEncoder(categories = 'auto',handle_unknown='ignore')
+    onehotencoder = OneHotEncoder(categories = 'auto')
     X=onehotencoder.fit_transform(X).toarray()    
     Y = df_data['label'].values    
         

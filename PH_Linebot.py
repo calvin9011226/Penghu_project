@@ -191,13 +191,15 @@ def handle_postback(event):
     # 取得 Postback Action 傳送的資料
     postback_data = event.postback.data
     if postback_data =="兩天一夜":
+            global age_1,gender_1 #測試用
             print("2days")
+            print(gender_1)
             gender = randrange(0,2)
             age = randrange(15,55)
             file='C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/plan_2day.csv'
             plan_data = pd.read_csv(file,encoding='utf-8-sig')
-            userID = ML.XGboost_plan(plan_data,gender,age)  
-            print(userID)
+            userID = ML.XGboost_plan(plan_data,gender_1,age_1)  
+            print(userID,gender,age)
             Filter.filter(file,userID)
             Plan2MYSQL.plan2mysql('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/plan.csv')
             line_bot_api.reply_message(event.reply_token, [TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),TextSendMessage(str(PHP_ngrok)+"/PengHu_plan.php")])
@@ -239,7 +241,7 @@ def handle_postback(event):
 
             # gender=postback_data
             # gender=FlexMessage.classify_gender(gender)
-            global gender_1 #測試用
+            # global gender_1 #測試用
             gender_1=postback_data
             gender_1=FlexMessage.classify_gender(gender_1)#測試用
             # print(gender_1)

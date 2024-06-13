@@ -103,7 +103,8 @@
                     },
                     opacity: 0.5
                 });
-                var contentString = JS_place[i];
+                // var contentString = JS_place[i];
+                var contentString = '<h1>大家好我是資訊視窗</h1><button id="btn">點我</button>';
                  //InfoWindow 會在地圖上方特定位置的彈出式視窗中顯示內容 (通常為文字或圖片)。
                 //資訊視窗是由一個內容區域和一個錐形柄所組成，錐形柄的尖端會連接地圖上的指定位置。
                 //資訊視窗會以對話方塊的形式顯示在螢幕閱讀器中。
