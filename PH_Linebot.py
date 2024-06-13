@@ -127,7 +127,7 @@ def linebot():
                 line_bot_api.reply_message(tk,FlexMessage.Carousel(carousel_contents)) 
             elif msg == "景點":
                 print(msg)                                       # 印出內容
-                line_bot_api.reply_message(tk, [TextSendMessage("請點選以下網址，將為您推薦附近景點"),TextSendMessage(str(PHP_ngrok)+"/attration_not_trainning.php")])
+                line_bot_api.reply_message(tk, [TextSendMessage("請點選以下網址，將為您推薦附近景點"),TextSendMessage(str(PHP_ngrok)+"/attration.php")])
 
             #功能5
             elif msg == "租車" or msg =="5":
