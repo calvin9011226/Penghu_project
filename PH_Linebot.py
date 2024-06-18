@@ -34,7 +34,7 @@ access_token = 'h/47RBzNDXh5jWXncB7rZ1GPYKG15fDyuCewrJEJ8Q314NL732t6hQo+Oql/hM/J
 secret = '1bf0051081f4240f32595d32d374b04c'
 line_bot_api = LineBotApi(access_token)              # 確認 token 是否正確
 handler = WebhookHandler(secret)                     # 確認 secret 是否正確
-PHP_ngrok ="https://3b11-59-102-234-91.ngrok-free.app"# 80
+PHP_ngrok ="https://9982-140-115-158-86.ngrok-free.app"# 80
 global age
 global gender
 global age_1 ,gender_1
@@ -60,7 +60,21 @@ def linebot():
                 # line_bot_api.reply_message(tk,TextSendMessage("請選擇您的行程規劃天數，將以大數據推薦行程"))
                 line_bot_api.reply_message(tk,[TextSendMessage("請選擇您的行程規劃天數，將以大數據推薦行程"),FlexMessage.travel_reply("行程規劃","兩天一夜","兩天一夜","兩天一夜","三天兩夜","三天兩夜","三天兩夜","四天三夜","四天三夜","四天三夜","五天四夜","五天四夜","五天四夜")])               
             #功能2
-            elif msg == "景點推薦"or msg =="2":
+            elif msg == "景點推薦" or msg == "2":
+                print(msg)
+                line_bot_api.reply_message(tk, [
+                    TemplateSendMessage(
+                        alt_text='請選擇是或否',
+                        template=ConfirmTemplate(
+                            text='您是否要進行永續觀光？',
+                            actions=[
+                                MessageAction(label='是', text='永續觀光'),
+                                MessageAction(label='否', text='一般景點推薦')
+                            ]
+                        )
+                    )
+                ])
+            elif msg == "一般景點推薦"or msg =="2-2":
                 print(msg)
                 weather = Now_weather.weather()
                 temperature = Now_weather.temperature()
