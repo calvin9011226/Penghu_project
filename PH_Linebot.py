@@ -26,6 +26,7 @@ import Googlemap_function
 import get_location
 import plan_location
 import PH_Attractions
+import urllib.parse
 
 
 app = Flask(__name__)
@@ -34,7 +35,7 @@ access_token = 'h/47RBzNDXh5jWXncB7rZ1GPYKG15fDyuCewrJEJ8Q314NL732t6hQo+Oql/hM/J
 secret = '1bf0051081f4240f32595d32d374b04c'
 line_bot_api = LineBotApi(access_token)              # 確認 token 是否正確
 handler = WebhookHandler(secret)                     # 確認 secret 是否正確
-PHP_ngrok ="https://9982-140-115-158-86.ngrok-free.app"# 80
+PHP_ngrok ="https://3614-59-102-234-91.ngrok-free.app"# 80
 global age
 global gender
 global age_1 ,gender_1
@@ -89,16 +90,29 @@ def linebot():
                 print(arr,gender_1,age_1,tidal,temperature)
                 #recommend = XGBOOST_predicted.XGboost_recommend1(arr,gender,age)
                 recommend = XGBOOST_predicted.XGboost_recommend2(arr,gender_1,age_1,tidal,temperature)
+                encoded_destination = urllib.parse.quote(recommend)
+                route_finder_url = f"https://3614-59-102-234-91.ngrok-free.app/test.php?destination={encoded_destination}"
                 #recommend = "掌上明珠"
                 print(recommend) #推薦的地點是從XGBOOST_predicted來的
                 recommend_website,recommend_imgur,recommend_map = PH_Attractions.Attractions_recommend(recommend)#圖片,網址,map是從PH_Attractions來的
                 print(recommend_website,recommend_imgur,recommend_map)
-                line_bot_api.reply_message(tk,[TextSendMessage("感謝等待\n系統以AI大數據機器學習的方式推薦以下適合您的地點"),
-                                                      TextSendMessage(str(recommend)),
-                                                      ImageSendMessage(original_content_url=str(recommend_imgur)+".jpg",preview_image_url=str(recommend_imgur)+".jpg"),
-                                                      TextSendMessage(recommend_website),
-                                                      TextSendMessage(recommend_map)
-                                                      ])
+                # line_bot_api.reply_message(tk,[TextSendMessage("感謝等待\n系統以AI大數據機器學習的方式推薦以下適合您的地點"),
+                #                                       TextSendMessage(str(recommend)),
+                #                                       ImageSendMessage(original_content_url=str(recommend_imgur)+".jpg",preview_image_url=str(recommend_imgur)+".jpg"),
+                #                                       TextSendMessage(recommend_website),
+                #                                       TextSendMessage(recommend_map)
+                #                                       ])
+                
+                # ************************************************************************************************
+                line_bot_api.reply_message(
+                    tk,
+                    [
+                        TextSendMessage("感謝等待\n系統已推薦以下適合您的地點"),
+                        TextSendMessage(str(recommend)),
+                        TextSendMessage(f"點擊以下連結查看到該地點的路線：\n{route_finder_url}")
+                    ]
+                )
+                
             elif msg == "永續觀光"or msg =="2-1":#測試功能
                 print(msg)
                 weather = Now_weather.weather()
@@ -154,6 +168,8 @@ def linebot():
             #     print(age_1)
             #     reply = f"您目前的年齡是: {age_1} 歲"
             #     line_bot_api.reply_message(tk, TextSendMessage(reply))
+
+        
                 
             #功能6
             elif msg == "搜集資料&修改資料"or msg=="1":
@@ -163,7 +179,6 @@ def linebot():
             elif approveAgeRespond==True:
                 try:
                     age=msg #儲存age
-                    
                     print("detect age=",age)
                     if 0<=int(age) and int(age)<=120:
                         age_1=int(age) #測試用
@@ -171,6 +186,7 @@ def linebot():
                         message=FlexMessage.gender_reply("性別類型","請輸入您的性別","男","男","男","女","女","女","其他","其他","其他")
                         line_bot_api.reply_message(tk,message)
                         approveGender=True
+
             
                     #年紀不合常理
                     else:
@@ -180,11 +196,12 @@ def linebot():
                 except Exception as e:
                     print("age type error", age)
                     line_bot_api.reply_message(tk,TextSendMessage("請輸入\"正確年紀\""))
+                 
             else :
                 print(msg)                                       # 印出內容
                 reply = msg
                 # line_bot_api.reply_message(tk,TextSendMessage(reply))# 回傳訊息
-        
+
         if type=='location':
             add = json_data['events'][0]['message']['address']  # 取得 LINE 收到的文字訊息
             lat = json_data['events'][0]['message']['latitude']  # 取得 LINE 收到的文字訊息
@@ -194,7 +211,7 @@ def linebot():
                 writer = csv.writer(file)
                 writer.writerow([add, lat, lon])
             line_bot_api.reply_message(tk,FlexMessage.ask_keyword()) 
-            print(789) 
+
 
     except:
         print(body)                                          # 如果發生錯誤，印出收到的內容
