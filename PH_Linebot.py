@@ -35,7 +35,7 @@ access_token = 'h/47RBzNDXh5jWXncB7rZ1GPYKG15fDyuCewrJEJ8Q314NL732t6hQo+Oql/hM/J
 secret = '1bf0051081f4240f32595d32d374b04c'
 line_bot_api = LineBotApi(access_token)              # 確認 token 是否正確
 handler = WebhookHandler(secret)                     # 確認 secret 是否正確
-PHP_ngrok ="https://3614-59-102-234-91.ngrok-free.app"# 80
+PHP_ngrok ="https://9ad4-140-115-158-86.ngrok-free.app"# 80
 global age
 global gender
 global age_1 ,gender_1
@@ -96,22 +96,23 @@ def linebot():
                 print(recommend) #推薦的地點是從XGBOOST_predicted來的
                 recommend_website,recommend_imgur,recommend_map = PH_Attractions.Attractions_recommend(recommend)#圖片,網址,map是從PH_Attractions來的
                 print(recommend_website,recommend_imgur,recommend_map)
-                # line_bot_api.reply_message(tk,[TextSendMessage("感謝等待\n系統以AI大數據機器學習的方式推薦以下適合您的地點"),
-                #                                       TextSendMessage(str(recommend)),
-                #                                       ImageSendMessage(original_content_url=str(recommend_imgur)+".jpg",preview_image_url=str(recommend_imgur)+".jpg"),
-                #                                       TextSendMessage(recommend_website),
-                #                                       TextSendMessage(recommend_map)
-                #                                       ])
+                line_bot_api.reply_message(tk,[TextSendMessage("感謝等待\n系統以AI大數據機器學習的方式推薦以下適合您的地點"),
+                                                      TextSendMessage(str(recommend)),
+                                                      ImageSendMessage(original_content_url=str(recommend_imgur)+".jpg",preview_image_url=str(recommend_imgur)+".jpg"),
+                                                      TextSendMessage(recommend_website),
+                                                      TextSendMessage(recommend_map)
+                                                      ])
                 
                 # ************************************************************************************************
-                line_bot_api.reply_message(
-                    tk,
-                    [
-                        TextSendMessage("感謝等待\n系統已推薦以下適合您的地點"),
-                        TextSendMessage(str(recommend)),
-                        TextSendMessage(f"點擊以下連結查看到該地點的路線：\n{route_finder_url}")
-                    ]
-                )
+                
+                # line_bot_api.reply_message(
+                #     tk,
+                #     [
+                #         TextSendMessage("感謝等待\n系統已推薦以下適合您的地點"),
+                #         TextSendMessage(str(recommend)),
+                #         TextSendMessage(f"點擊以下連結查看到該地點的路線：\n{route_finder_url}")
+                #     ]
+                # )
                 
             elif msg == "永續觀光"or msg =="2-1":#測試功能
                 print(msg)
@@ -233,7 +234,20 @@ def handle_postback(event):
             print(userID,gender,age)
             Filter.filter(file,userID)
             Plan2MYSQL.plan2mysql('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/plan.csv')
-            line_bot_api.reply_message(event.reply_token, [TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),TextSendMessage(str(PHP_ngrok)+"/PengHu_plan.php")])
+
+            # _____________________測試________________________________________________
+            # 從 location.csv 檔案中獲取最新的位置資訊
+            lat, lon = get_location.get_location('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv')
+            print("lat and lon :", lat ,lon)
+            # 將位置資訊加入 URL
+            url = f"{PHP_ngrok}/test_v3.php?lat={lat}&lng={lon}"
+            line_bot_api.reply_message(event.reply_token, [
+            TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),
+            TextSendMessage(url)
+            ])
+            # _____________________測試________________________________________________
+
+            # line_bot_api.reply_message(event.reply_token, [TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),TextSendMessage(str(PHP_ngrok)+"/PengHu_plan.php")])
             
     elif postback_data =="三天兩夜":
             print("3days")
