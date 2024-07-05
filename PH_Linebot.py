@@ -36,10 +36,7 @@ secret = '1bf0051081f4240f32595d32d374b04c'
 line_bot_api = LineBotApi(access_token)              # 確認 token 是否正確
 handler = WebhookHandler(secret)                     # 確認 secret 是否正確
 PHP_ngrok ="https://9ad4-140-115-158-86.ngrok-free.app"# 80
-global age
-global gender
 global age_1 ,gender_1
-global nearby
 
 @app.route("/", methods=['POST'])
 def linebot():
@@ -89,11 +86,9 @@ def linebot():
                 age = randrange(15,55)
                 global age_1,gender_1 #測試用
                 print(arr,gender_1,age_1,tidal,temperature)
-                #recommend = XGBOOST_predicted.XGboost_recommend1(arr,gender,age)
                 recommend = XGBOOST_predicted.XGboost_recommend2(arr,gender_1,age_1,tidal,temperature)
                 encoded_destination = urllib.parse.quote(recommend)
                 route_finder_url = f"https://3614-59-102-234-91.ngrok-free.app/test.php?destination={encoded_destination}"
-                #recommend = "掌上明珠"
                 print(recommend) #推薦的地點是從XGBOOST_predicted來的
                 recommend_website,recommend_imgur,recommend_map = PH_Attractions.Attractions_recommend(recommend)#圖片,網址,map是從PH_Attractions來的
                 print(recommend_website,recommend_imgur,recommend_map)
@@ -148,10 +143,7 @@ def linebot():
             #功能4
             elif msg == "附近搜尋"or msg =="4":
                 print(msg)
-                global nearby 
-                nearby = True
-                print ("nearby :",nearby)
-                line_bot_api.reply_message(tk,FlexMessage.ask_location())
+                line_bot_api.reply_message(tk,FlexMessage.ask_keyword())
             elif msg == "餐廳" or msg == "停車場" or msg == "住宿":
                 print(msg)
                 lat,lon=get_location.get_location('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv')
@@ -180,7 +172,6 @@ def linebot():
             elif msg == "搜集資料&修改資料"or msg=="1":
                 print(msg)
                 line_bot_api.reply_message(tk,TextSendMessage("請輸入你的年紀"))
-                nearby = False
                 approveAgeRespond=True
             elif approveAgeRespond==True:
                 try:
@@ -209,7 +200,6 @@ def linebot():
                 # line_bot_api.reply_message(tk,TextSendMessage(reply))# 回傳訊息
 
         if type=='location':
-            if  nearby == True:
                 add = json_data['events'][0]['message']['address']  # 取得 LINE 收到的文字訊息
                 lat = json_data['events'][0]['message']['latitude']  # 取得 LINE 收到的文字訊息
                 lon = json_data['events'][0]['message']['longitude']  # 取得 LINE 收到的文字訊息
@@ -217,17 +207,8 @@ def linebot():
                 with open('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv', 'w', newline='', encoding='utf-8') as file:
                     writer = csv.writer(file)
                     writer.writerow([add, lat, lon])
-                nearby = False
-                line_bot_api.reply_message(tk,FlexMessage.ask_keyword())
-            else:
-                add = json_data['events'][0]['message']['address']  # 取得 LINE 收到的文字訊息
-                lat = json_data['events'][0]['message']['latitude']  # 取得 LINE 收到的文字訊息
-                lon = json_data['events'][0]['message']['longitude']  # 取得 LINE 收到的文字訊息
-                print(add, lat, lon)
-                with open('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv', 'w', newline='', encoding='utf-8') as file:
-                    writer = csv.writer(file)
-                    writer.writerow([add, lat, lon]) 
-
+                line_bot_api.reply_message(tk,TextSendMessage("資料儲存完畢\n請根據您的需求輸入2~6,來獲得相對應的功能:\n2.景點推薦\n3.景點人潮\n4.附近搜尋\n5.租車\n6.行程規劃"))
+                print("結束使用\"收集資料功能\" \n------------------") 
 
     except:
         print(body)                                          # 如果發生錯誤，印出收到的內容
@@ -305,8 +286,7 @@ def handle_postback(event):
             gender_1=postback_data
             gender_1=FlexMessage.classify_gender(gender_1)#測試用
             # print(gender_1)
-            line_bot_api.reply_message(event.reply_token,TextSendMessage("資料儲存完畢\n請根據您的需求輸入2~6,來獲得相對應的功能:\n2.景點推薦\n3.景點人潮\n4.附近搜尋\n5.租車\n6.行程規劃"))
-            print("結束使用\"收集資料功能\" \n------------------")
+            line_bot_api.reply_message(event.reply_token, [FlexMessage.ask_location()])
     if postback_data=="需要幫助" :
         reply_array=[]
         reply_array.append(ImageSendMessage(original_content_url='https://imgur.com/8AKsigL.png',preview_image_url='https://imgur.com/8AKsigL.png'))
