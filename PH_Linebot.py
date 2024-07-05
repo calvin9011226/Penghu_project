@@ -180,6 +180,7 @@ def linebot():
             elif msg == "搜集資料&修改資料"or msg=="1":
                 print(msg)
                 line_bot_api.reply_message(tk,TextSendMessage("請輸入你的年紀"))
+                nearby = False
                 approveAgeRespond=True
             elif approveAgeRespond==True:
                 try:
@@ -218,7 +219,6 @@ def linebot():
                     writer.writerow([add, lat, lon])
                 nearby = False
                 line_bot_api.reply_message(tk,FlexMessage.ask_keyword())
-
             else:
                 add = json_data['events'][0]['message']['address']  # 取得 LINE 收到的文字訊息
                 lat = json_data['events'][0]['message']['latitude']  # 取得 LINE 收到的文字訊息
