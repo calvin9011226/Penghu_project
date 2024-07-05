@@ -39,6 +39,7 @@ PHP_ngrok ="https://9ad4-140-115-158-86.ngrok-free.app"# 80
 global age
 global gender
 global age_1 ,gender_1
+global nearby
 
 @app.route("/", methods=['POST'])
 def linebot():
@@ -147,6 +148,9 @@ def linebot():
             #功能4
             elif msg == "附近搜尋"or msg =="4":
                 print(msg)
+                global nearby 
+                nearby = True
+                print ("nearby :",nearby)
                 line_bot_api.reply_message(tk,FlexMessage.ask_location())
             elif msg == "餐廳" or msg == "停車場" or msg == "住宿":
                 print(msg)
@@ -204,14 +208,25 @@ def linebot():
                 # line_bot_api.reply_message(tk,TextSendMessage(reply))# 回傳訊息
 
         if type=='location':
-            add = json_data['events'][0]['message']['address']  # 取得 LINE 收到的文字訊息
-            lat = json_data['events'][0]['message']['latitude']  # 取得 LINE 收到的文字訊息
-            lon = json_data['events'][0]['message']['longitude']  # 取得 LINE 收到的文字訊息
-            print(add, lat, lon)
-            with open('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv', 'w', newline='', encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerow([add, lat, lon])
-            line_bot_api.reply_message(tk,FlexMessage.ask_keyword()) 
+            if  nearby == True:
+                add = json_data['events'][0]['message']['address']  # 取得 LINE 收到的文字訊息
+                lat = json_data['events'][0]['message']['latitude']  # 取得 LINE 收到的文字訊息
+                lon = json_data['events'][0]['message']['longitude']  # 取得 LINE 收到的文字訊息
+                print(add, lat, lon)
+                with open('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv', 'w', newline='', encoding='utf-8') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([add, lat, lon])
+                nearby = False
+                line_bot_api.reply_message(tk,FlexMessage.ask_keyword())
+
+            else:
+                add = json_data['events'][0]['message']['address']  # 取得 LINE 收到的文字訊息
+                lat = json_data['events'][0]['message']['latitude']  # 取得 LINE 收到的文字訊息
+                lon = json_data['events'][0]['message']['longitude']  # 取得 LINE 收到的文字訊息
+                print(add, lat, lon)
+                with open('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv', 'w', newline='', encoding='utf-8') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([add, lat, lon]) 
 
 
     except:
