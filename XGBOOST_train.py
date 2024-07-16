@@ -106,5 +106,5 @@ def XGboost_recommend3():
     xgboostModel.save_model('xgb_model3.bin')
 
 #XGboost_recommend1()
-XGboost_recommend2()
-# XGboost_recommend3()
+# XGboost_recommend2()
+XGboost_recommend3()

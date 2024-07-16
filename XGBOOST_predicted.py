@@ -92,7 +92,8 @@ def XGboost_recommend3(arr,gender,age,tidal,temperature):
 
     X = df_data.drop(labels=['label'],axis=1).values # 移除label並取得剩下欄位資料
 
-    onehotencoder = OneHotEncoder(categories = 'auto',handle_unknown='ignore')
+    # onehotencoder = OneHotEncoder(categories = 'auto',handle_unknown='ignore')
+    onehotencoder = OneHotEncoder(categories = 'auto')
     X=onehotencoder.fit_transform(X).toarray()    
     Y = df_data['label'].values    
         
@@ -101,6 +102,7 @@ def XGboost_recommend3(arr,gender,age,tidal,temperature):
     arr_labelencode = labelencoder.transform(arr) #用同一個labelencoder能transform到一樣的編碼
 
     Value_arr = np.array([arr_labelencode[0],gender,age,tidal,temperature])
+    print("Value_arr :'weather','gender','age','tidal','temperature'= ",Value_arr)
     final=onehotencoder.transform([Value_arr])#用同一個onehotencoder能transform到一樣的編碼
     loaded_model = XGBClassifier()
     loaded_model.load_model('PHtest.bin')
@@ -120,7 +122,8 @@ print("Now_weather.weather() :",arr)
 gender = randrange(0,2)
 age = randrange(15,55)
 temperature = Now_weather.temperature()
-tidal = 0
+tidal = randrange(0,3)
 #print(XGboost_recommend1(arr,gender,age))
 # print(XGboost_recommend2(arr,gender,age,tidal,temperature))
-# print(XGboost_recommend3(arr,gender,age,tidal,temperature))
+print(arr,gender,age,tidal,temperature)
+print(XGboost_recommend3(arr,gender,age,tidal,temperature))

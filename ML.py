@@ -105,7 +105,7 @@ def XGboost_recommend3(arr,gender,age,tidal,temperature):
     # 移除label並取得剩下欄位資料
     X = df_data.drop(labels=['label'],axis=1).values 
 
-    onehotencoder = OneHotEncoder(categories = 'auto',handle_unknown='ignore')
+    onehotencoder = OneHotEncoder(categories = 'auto')
     X=onehotencoder.fit_transform(X).toarray()    
     Y = df_data['label'].values    
     
@@ -173,4 +173,4 @@ arr = np.array("晴")
 arr = np.atleast_1d(arr)
 #print(XGboost_recommend1(arr,1,69))
 # print(XGboost_recommend2(arr,1,25,2,24))
-print(XGboost_recommend3(arr,1,50,2,24))
+# print(XGboost_recommend3(arr,1,50,2,24))
