@@ -35,7 +35,7 @@ access_token = 'h/47RBzNDXh5jWXncB7rZ1GPYKG15fDyuCewrJEJ8Q314NL732t6hQo+Oql/hM/J
 secret = '1bf0051081f4240f32595d32d374b04c'
 line_bot_api = LineBotApi(access_token)              # 確認 token 是否正確
 handler = WebhookHandler(secret)                     # 確認 secret 是否正確
-PHP_ngrok ="https://cc30-123-241-68-148.ngrok-free.app"# 80
+PHP_ngrok ="https://56d0-140-115-158-86.ngrok-free.app"# 80
 global age_1 ,gender_1
 
 @app.route("/", methods=['POST'])
@@ -169,7 +169,7 @@ def linebot():
         
                 
             #功能6
-            elif msg == "搜集資料&修改資料"or msg=="1":
+            elif msg == "收集資料&修改資料"or msg=="1":
                 print(msg)
                 line_bot_api.reply_message(tk,TextSendMessage("請輸入你的年紀"))
                 approveAgeRespond=True
@@ -207,7 +207,7 @@ def linebot():
                 with open('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv', 'w', newline='', encoding='utf-8') as file:
                     writer = csv.writer(file)
                     writer.writerow([add, lat, lon])
-                line_bot_api.reply_message(tk,TextSendMessage("資料儲存完畢\n請根據您的需求輸入2~6,來獲得相對應的功能:\n2.景點推薦\n3.景點人潮\n4.附近搜尋\n5.租車\n6.行程規劃"))
+                line_bot_api.reply_message(tk,TextSendMessage("資料儲存完畢\n請根據您的需求點選下方圖文選單,來獲得相對應的功能"))
                 print("結束使用\"收集資料功能\" \n------------------") 
 
     except:
@@ -236,7 +236,7 @@ def handle_postback(event):
             lat, lon = get_location.get_location('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv')
             print("lat and lon :", lat ,lon)
             # 將位置資訊加入 URL
-            url = f"{PHP_ngrok}/test_v3.php?lat={lat}&lng={lon}"
+            url = f"{PHP_ngrok}/test_v9.php?lat={lat}&lng={lon}"
             line_bot_api.reply_message(event.reply_token, [
             TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),
             TextSendMessage(url)

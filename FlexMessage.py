@@ -31,7 +31,7 @@ def travel_reply(Title,label1,text1,data1,label2,text2,data2,label3,text3,data3,
             direction='ltr',
             #最上層
             hero=ImageComponent(
-                    url='https://i.imgur.com/W7kiWQT.png',
+                    url='https://i.imgur.com/o2S08In.png',
                     size='full',
                     aspect_ratio='2:1',
                     aspect_mode='cover',
