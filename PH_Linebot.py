@@ -35,8 +35,11 @@ access_token = 'h/47RBzNDXh5jWXncB7rZ1GPYKG15fDyuCewrJEJ8Q314NL732t6hQo+Oql/hM/J
 secret = '1bf0051081f4240f32595d32d374b04c'
 line_bot_api = LineBotApi(access_token)              # 確認 token 是否正確
 handler = WebhookHandler(secret)                     # 確認 secret 是否正確
-PHP_ngrok ="https://56d0-140-115-158-86.ngrok-free.app"# 80
+PHP_ngrok ="https://acb2-61-231-131-13.ngrok-free.app"# 80
 global age_1 ,gender_1
+
+# Google 表單的 URL
+GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe0MUssdGPeLqZFTEkBDJy4VBf5k2jsefT-QCA0iNbdau-j_A/viewform"
 
 @app.route("/", methods=['POST'])
 def linebot():
@@ -135,7 +138,24 @@ def linebot():
                                                 TextSendMessage(recommend_website),
                                                 TextSendMessage(recommend_map)
                                                  ])
-                '''                                 
+                '''                 
+            # beta "填寫問卷"
+            elif msg == "填寫問卷(先關閉)":
+                survey_message = TextSendMessage(text="請點擊以下連結填寫問卷：")
+                button_template = TemplateSendMessage(
+                    alt_text='問卷連結',
+                    template=ButtonsTemplate(
+                        title='填寫問卷',
+                        text='請點擊下方按鈕開始填寫問卷',
+                        actions=[
+                            URIAction(
+                                label='開始填寫',
+                                uri=GOOGLE_FORM_URL
+                            )
+                        ]
+                    )
+                )
+                line_bot_api.reply_message(tk, [survey_message, button_template])                
             #功能3
             elif msg == "景點人潮"or msg=="3":
                 print(msg)
@@ -236,14 +256,14 @@ def handle_postback(event):
             lat, lon = get_location.get_location('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv')
             print("lat and lon :", lat ,lon)
             # 將位置資訊加入 URL
-            url = f"{PHP_ngrok}/test_v9.php?lat={lat}&lng={lon}"
+            url = f"{PHP_ngrok}/PengHu_plan.php?lat={lat}&lng={lon}"
             line_bot_api.reply_message(event.reply_token, [
             TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),
             TextSendMessage(url)
             ])
             # _____________________測試________________________________________________
 
-            # line_bot_api.reply_message(event.reply_token, [TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),TextSendMessage(str(PHP_ngrok)+"/PengHu_plan.php")])
+            # line_bot_api.reply_message(event.reply_token, [TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),TextSendMessage(str(PHP_ngrok)+"/PengHu_plan_old.php")])
             
     elif postback_data =="三天兩夜":
             print("3days")
@@ -255,7 +275,21 @@ def handle_postback(event):
             print(userID)
             Filter.filter(file,userID)
             Plan2MYSQL.plan2mysql('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/plan.csv')
-            line_bot_api.reply_message(event.reply_token, [TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的三天兩夜行程"),TextSendMessage(str(PHP_ngrok)+"/PengHu_plan.php")])
+            
+            # _____________________測試________________________________________________
+            # 從 location.csv 檔案中獲取最新的位置資訊
+            lat, lon = get_location.get_location('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv')
+            print("lat and lon :", lat ,lon)
+            # 將位置資訊加入 URL
+            url = f"{PHP_ngrok}/PengHu_plan.php?lat={lat}&lng={lon}"
+            line_bot_api.reply_message(event.reply_token, [
+            TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),
+            TextSendMessage(url)
+            ])
+            # _____________________測試________________________________________________
+            
+            # line_bot_api.reply_message(event.reply_token, [TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的三天兩夜行程"),TextSendMessage(str(PHP_ngrok)+"/PengHu_plan_old.php")]) //舊版本
+    
     elif postback_data =="四天三夜":
             print("4days")
             gender = randrange(0,2)
@@ -266,7 +300,20 @@ def handle_postback(event):
             print(userID)
             Filter.filter(file,userID)
             Plan2MYSQL.plan2mysql('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/plan.csv')
-            line_bot_api.reply_message(event.reply_token, [TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的四天三夜行程"),TextSendMessage(str(PHP_ngrok)+"/PengHu_plan.php")])
+                        
+            # _____________________測試________________________________________________
+            # 從 location.csv 檔案中獲取最新的位置資訊
+            lat, lon = get_location.get_location('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv')
+            print("lat and lon :", lat ,lon)
+            # 將位置資訊加入 URL
+            url = f"{PHP_ngrok}/PengHu_plan.php?lat={lat}&lng={lon}"
+            line_bot_api.reply_message(event.reply_token, [
+            TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),
+            TextSendMessage(url)
+            ])
+            # _____________________測試________________________________________________
+            
+            # line_bot_api.reply_message(event.reply_token, [TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的四天三夜行程"),TextSendMessage(str(PHP_ngrok)+"/PengHu_plan.php")])
     elif postback_data =="五天四夜":
             print("5days")
             gender = randrange(0,2)
@@ -277,7 +324,20 @@ def handle_postback(event):
             print(userID)
             Filter.filter(file,userID)
             Plan2MYSQL.plan2mysql('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/plan.csv')
-            line_bot_api.reply_message(event.reply_token, [TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的五天四夜行程"),TextSendMessage(str(PHP_ngrok)+"/PengHu_plan.php")])
+                        
+            # _____________________測試________________________________________________
+            # 從 location.csv 檔案中獲取最新的位置資訊
+            lat, lon = get_location.get_location('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv')
+            print("lat and lon :", lat ,lon)
+            # 將位置資訊加入 URL
+            url = f"{PHP_ngrok}/PengHu_plan.php?lat={lat}&lng={lon}"
+            line_bot_api.reply_message(event.reply_token, [
+            TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),
+            TextSendMessage(url)
+            ])
+            # _____________________測試________________________________________________
+            
+            # line_bot_api.reply_message(event.reply_token, [TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的五天四夜行程"),TextSendMessage(str(PHP_ngrok)+"/PengHu_plan.php")])
     elif postback_data=="男" or postback_data=="女" or postback_data=="其他":
 
             # gender=postback_data
