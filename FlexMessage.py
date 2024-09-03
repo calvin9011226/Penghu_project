@@ -227,7 +227,7 @@ def ask_keyword():
                                                 style='secondary',
                                                 color='#FFEE99',
                                                 height='sm',
-                                                action=MessageAction(label="景點",text="景點",data="景點")
+                                                action=MessageAction(label="風景區",text="風景區",data="風景區")
                                             )
                                         ]
                                     ),

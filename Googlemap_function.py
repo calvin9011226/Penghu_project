@@ -74,7 +74,7 @@ def googlemap_search_nearby(lat,lng,keyword):
     gmaps=googlemaps.Client(key="AIzaSyAlrONk6sDRUMmEkkjAsYxfuPvMVz7wSls")
     #change to dictionary
     loc={'lat':lat,'lng':lng}
-    rad=1000
+    rad=2000
     search_number=len(gmaps.places_nearby(keyword=keyword,radius=rad,location=loc)['results'])
     
     placeID_list=[]

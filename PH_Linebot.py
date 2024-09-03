@@ -35,7 +35,7 @@ access_token = 'h/47RBzNDXh5jWXncB7rZ1GPYKG15fDyuCewrJEJ8Q314NL732t6hQo+Oql/hM/J
 secret = '1bf0051081f4240f32595d32d374b04c'
 line_bot_api = LineBotApi(access_token)              # 確認 token 是否正確
 handler = WebhookHandler(secret)                     # 確認 secret 是否正確
-PHP_ngrok ="https://acb2-61-231-131-13.ngrok-free.app"# 80
+PHP_ngrok ="https://e561-140-115-154-208.ngrok-free.app"# 80
 global age_1 ,gender_1
 
 # Google 表單的 URL
@@ -164,7 +164,7 @@ def linebot():
             elif msg == "附近搜尋"or msg =="4":
                 print(msg)
                 line_bot_api.reply_message(tk,FlexMessage.ask_keyword())
-            elif msg == "餐廳" or msg == "停車場" or msg == "住宿":
+            elif msg == "餐廳" or msg == "停車場" or msg == "風景區" or msg == "住宿":
                 print(msg)
                 lat,lon=get_location.get_location('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/location.csv')
                 Googlemap_function.googlemap_search_nearby(lat,lon,msg)
@@ -283,7 +283,7 @@ def handle_postback(event):
             # 將位置資訊加入 URL
             url = f"{PHP_ngrok}/PengHu_plan.php?lat={lat}&lng={lon}"
             line_bot_api.reply_message(event.reply_token, [
-            TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),
+            TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的三天兩夜行程"),
             TextSendMessage(url)
             ])
             # _____________________測試________________________________________________
@@ -308,7 +308,7 @@ def handle_postback(event):
             # 將位置資訊加入 URL
             url = f"{PHP_ngrok}/PengHu_plan.php?lat={lat}&lng={lon}"
             line_bot_api.reply_message(event.reply_token, [
-            TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),
+            TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的四天三夜行程"),
             TextSendMessage(url)
             ])
             # _____________________測試________________________________________________
@@ -332,7 +332,7 @@ def handle_postback(event):
             # 將位置資訊加入 URL
             url = f"{PHP_ngrok}/PengHu_plan.php?lat={lat}&lng={lon}"
             line_bot_api.reply_message(event.reply_token, [
-            TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的兩天一夜行程"),
+            TextSendMessage("以使用機器學習依據相關性，找尋過往數據最適合您的五天四夜行程"),
             TextSendMessage(url)
             ])
             # _____________________測試________________________________________________
