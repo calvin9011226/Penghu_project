@@ -35,7 +35,7 @@ access_token = 'h/47RBzNDXh5jWXncB7rZ1GPYKG15fDyuCewrJEJ8Q314NL732t6hQo+Oql/hM/J
 secret = '1bf0051081f4240f32595d32d374b04c'
 line_bot_api = LineBotApi(access_token)              # 確認 token 是否正確
 handler = WebhookHandler(secret)                     # 確認 secret 是否正確
-PHP_ngrok ="https://e561-140-115-154-208.ngrok-free.app"# 80
+PHP_ngrok ="https://c5fd-140-115-154-214.ngrok-free.app"# 80
 global age_1 ,gender_1
 
 # Google 表單的 URL
@@ -56,40 +56,98 @@ def linebot():
         if type=='text':
             msg = json_data['events'][0]['message']['text']  # 取得 LINE 收到的文字訊息
             #功能1
-            if msg == "行程規劃"or msg =="6":
+            if msg == "行程規劃":
                 print(msg)
                 # line_bot_api.reply_message(tk,TextSendMessage(msg)) # 回傳訊息
                 # line_bot_api.reply_message(tk,TextSendMessage("請選擇您的行程規劃天數，將以大數據推薦行程"))
                 line_bot_api.reply_message(tk,[TextSendMessage("請選擇您的行程規劃天數，將以大數據推薦行程"),FlexMessage.travel_reply("行程規劃","兩天一夜","兩天一夜","兩天一夜","三天兩夜","三天兩夜","三天兩夜","四天三夜","四天三夜","四天三夜","五天四夜","五天四夜","五天四夜")])               
             #功能2
-            elif msg == "景點推薦" or msg == "2":
+            elif msg == "景點推薦" :
                 print(msg)
                 line_bot_api.reply_message(tk, [
                     TemplateSendMessage(
-                        alt_text='請選擇是或否',
+                        alt_text='請選擇希望推薦景點或是推薦餐廳',
                         template=ConfirmTemplate(
-                            text='您是否要進行永續觀光？',
+                            text='您比較希望系統推薦景點還是餐廳？',
                             actions=[
-                                MessageAction(label='是', text='永續觀光'),
-                                MessageAction(label='否', text='一般景點推薦')
+                                MessageAction(label='景點', text='選擇景點'),
+                                MessageAction(label='餐廳', text='選擇餐廳')
                             ]
                         )
                     )
                 ])
-            elif msg == "一般景點推薦"or msg =="2-2":
+
+            # _____________________測試________________________________________________
+            elif msg == "選擇景點":
+                line_bot_api.reply_message(tk, [
+                TemplateSendMessage(
+                    alt_text='是否要推薦永續觀光的景點',
+                    template=ConfirmTemplate(
+                        text='您是否希望我們推薦永續觀光的景點？',
+                        actions=[
+                            MessageAction(label='是', text='永續景點'),
+                            MessageAction(label='否', text='一般景點')
+                        ]
+                    )
+                )
+            ])
+
+            elif msg == "選擇餐廳":
+                line_bot_api.reply_message(tk, [
+                    TemplateSendMessage(
+                        alt_text='是否要推薦永續觀光的餐廳',
+                        template=ConfirmTemplate(
+                            text='您是否希望我們推薦永續觀光的餐廳？',
+                            actions=[
+                                MessageAction(label='是', text='永續餐廳'),
+                                MessageAction(label='否', text='一般餐廳')
+                            ]
+                        )
+                    )
+                ])
+            elif msg == "永續景點":
                 print(msg)
                 weather = Now_weather.weather()
                 temperature = Now_weather.temperature()
                 #weather = "雨"
                 # temperature = randrange(15,24)
                 arr = np.array([weather])
+                arr_msg=np.array([msg])
+
                 tidal = Now_weather.tidal()
                 # tidal = randrange(0,2)
                 # gender = randrange(0,2)
                 age = randrange(15,55)
                 global age_1,gender_1 #測試用
+                print(arr,gender_1,age_1,tidal,temperature,arr_msg)
+                recommend = XGBOOST_predicted.XGboost_classification(arr,gender_1,age_1,tidal,temperature,arr_msg)
+                encoded_destination = urllib.parse.quote(recommend)
+                print(recommend) #推薦的地點是從XGBOOST_predicted來的
+                recommend_website,recommend_imgur,recommend_map = PH_Attractions.Attractions_recommend1(recommend)#圖片,網址,map是從PH_Attractions來的
+                print(recommend_website,recommend_imgur,recommend_map)
+                line_bot_api.reply_message(tk,[TextSendMessage("感謝等待\n系統以AI大數據機器學習的方式推薦以下適合您的地點"),
+                                                      TextSendMessage(str(recommend)),
+                                                      ImageSendMessage(original_content_url=str(recommend_imgur)+".jpg",preview_image_url=str(recommend_imgur)+".jpg"),
+                                                      TextSendMessage(recommend_website),
+                                                      TextSendMessage(recommend_map)
+                                                      ])
+
+            # _____________________測試________________________________________________
+
+            elif msg == "一般景點":
+                print(msg)
+                weather = Now_weather.weather()
+                temperature = Now_weather.temperature()
+                #weather = "雨"
+                # temperature = randrange(15,24)
+                arr = np.array([weather])
+                arr_msg=np.array([msg])
+                tidal = Now_weather.tidal()
+                # tidal = randrange(0,2)
+                # gender = randrange(0,2)
+                age = randrange(15,55)
                 print(arr,gender_1,age_1,tidal,temperature)
-                recommend = XGBOOST_predicted.XGboost_recommend2(arr,gender_1,age_1,tidal,temperature)
+                recommend = XGBOOST_predicted.XGboost_classification(arr,gender_1,age_1,tidal,temperature,arr_msg)
                 encoded_destination = urllib.parse.quote(recommend)
                 route_finder_url = f"https://3614-59-102-234-91.ngrok-free.app/test.php?destination={encoded_destination}"
                 print(recommend) #推薦的地點是從XGBOOST_predicted來的
@@ -101,7 +159,7 @@ def linebot():
                                                       TextSendMessage(recommend_website),
                                                       TextSendMessage(recommend_map)
                                                       ])
-                
+
                 # ************************************************************************************************
                 
                 # line_bot_api.reply_message(
@@ -112,24 +170,77 @@ def linebot():
                 #         TextSendMessage(f"點擊以下連結查看到該地點的路線：\n{route_finder_url}")
                 #     ]
                 # )
-                
-            elif msg == "永續觀光"or msg =="2-1":#測試功能
+
+            elif msg == "永續餐廳":
                 print(msg)
                 weather = Now_weather.weather()
                 temperature = Now_weather.temperature()
+                #weather = "雨"
+                # temperature = randrange(15,24)
                 arr = np.array([weather])
+                arr_msg=np.array([msg])
+
                 tidal = Now_weather.tidal()
+                # tidal = randrange(0,2)
+                # gender = randrange(0,2)
                 age = randrange(15,55)
-                print(arr,gender_1,age_1,tidal,temperature)
-                recommend = ML.XGboost_recommend3(arr,gender_1,age_1,tidal,temperature)
+                print(arr,gender_1,age_1,tidal,temperature,arr_msg)
+                recommend = XGBOOST_predicted.XGboost_classification(arr,gender_1,age_1,tidal,temperature,arr_msg)
+                encoded_destination = urllib.parse.quote(recommend)
                 print(recommend) #推薦的地點是從XGBOOST_predicted來的
                 recommend_website,recommend_imgur,recommend_map = PH_Attractions.Attractions_recommend1(recommend)#圖片,網址,map是從PH_Attractions來的
+                print(recommend_website,recommend_imgur,recommend_map)
                 line_bot_api.reply_message(tk,[TextSendMessage("感謝等待\n系統以AI大數據機器學習的方式推薦以下適合您的地點"),
                                                       TextSendMessage(str(recommend)),
                                                       ImageSendMessage(original_content_url=str(recommend_imgur)+".jpg",preview_image_url=str(recommend_imgur)+".jpg"),
                                                       TextSendMessage(recommend_website),
                                                       TextSendMessage(recommend_map)
                                                       ])
+
+            elif msg == "一般餐廳":
+                print(msg)
+                weather = Now_weather.weather()
+                temperature = Now_weather.temperature()
+                #weather = "雨"
+                # temperature = randrange(15,24)
+                arr = np.array([weather])
+                arr_msg=np.array([msg])
+
+                tidal = Now_weather.tidal()
+                # tidal = randrange(0,2)
+                # gender = randrange(0,2)
+                age = randrange(15,55)
+                print(arr,gender_1,age_1,tidal,temperature,arr_msg)
+                recommend = XGBOOST_predicted.XGboost_classification(arr,gender_1,age_1,tidal,temperature,arr_msg)
+                encoded_destination = urllib.parse.quote(recommend)
+                print(recommend) #推薦的地點是從XGBOOST_predicted來的
+                recommend_website,recommend_imgur,recommend_map = PH_Attractions.Attractions_recommend(recommend)#圖片,網址,map是從PH_Attractions來的
+                print(recommend_website,recommend_imgur,recommend_map)
+                line_bot_api.reply_message(tk,[TextSendMessage("感謝等待\n系統以AI大數據機器學習的方式推薦以下適合您的地點"),
+                                                      TextSendMessage(str(recommend)),
+                                                      ImageSendMessage(original_content_url=str(recommend_imgur)+".jpg",preview_image_url=str(recommend_imgur)+".jpg"),
+                                                      TextSendMessage(recommend_website),
+                                                      TextSendMessage(recommend_map)
+                                                      ])
+
+
+            # elif msg == "永續觀光":#測試功能
+            #     print(msg)
+            #     weather = Now_weather.weather()
+            #     temperature = Now_weather.temperature()
+            #     arr = np.array([weather])
+            #     tidal = Now_weather.tidal()
+            #     age = randrange(15,55)
+            #     print(arr,gender_1,age_1,tidal,temperature)
+            #     recommend = ML.XGboost_recommend3(arr,gender_1,age_1,tidal,temperature)
+            #     print(recommend) #推薦的地點是從XGBOOST_predicted來的
+            #     recommend_website,recommend_imgur,recommend_map = PH_Attractions.Attractions_recommend1(recommend)#圖片,網址,map是從PH_Attractions來的
+            #     line_bot_api.reply_message(tk,[TextSendMessage("感謝等待\n系統以AI大數據機器學習的方式推薦以下適合您的地點"),
+            #                                           TextSendMessage(str(recommend)),
+            #                                           ImageSendMessage(original_content_url=str(recommend_imgur)+".jpg",preview_image_url=str(recommend_imgur)+".jpg"),
+            #                                           TextSendMessage(recommend_website),
+            #                                           TextSendMessage(recommend_map)
+            #                                           ])
                 '''
                 recommend_website,recommend_imgur,recommend_map = Search.Attractions_recommend(recommend)
                 line_bot_api.reply_message(tk,[TextSendMessage("感謝等待\n系統以AI大數據機器學習的方式推薦以下適合您的地點"),
@@ -157,11 +268,11 @@ def linebot():
                 )
                 line_bot_api.reply_message(tk, [survey_message, button_template])                
             #功能3
-            elif msg == "景點人潮"or msg=="3":
+            elif msg == "景點人潮":
                 print(msg)
                 line_bot_api.reply_message(tk, [TextSendMessage("請點選以下網址，將由大數據為您分析這時間的人潮"),TextSendMessage(str(PHP_ngrok)+"/PengHu_crowd2.php")])
             #功能4
-            elif msg == "附近搜尋"or msg =="4":
+            elif msg == "附近搜尋":
                 print(msg)
                 line_bot_api.reply_message(tk,FlexMessage.ask_keyword())
             elif msg == "餐廳" or msg == "停車場" or msg == "風景區" or msg == "住宿":
@@ -175,7 +286,7 @@ def linebot():
                 line_bot_api.reply_message(tk, [TextSendMessage("請點選以下網址，將為您推薦附近景點"),TextSendMessage(str(PHP_ngrok)+"/attration.php")])
 
             #功能5
-            elif msg == "租車" or msg =="5":
+            elif msg == "租車" :
                 line_bot_api.reply_message(tk, [TextSendMessage("請點選以下網址，將為您推薦租車店家"),TextSendMessage(str(PHP_ngrok)+"/car_rent.php")])
 
             # # 測試用
@@ -189,7 +300,7 @@ def linebot():
         
                 
             #功能6
-            elif msg == "收集資料&修改資料"or msg=="1":
+            elif msg == "收集資料&修改資料":
                 print(msg)
                 line_bot_api.reply_message(tk,TextSendMessage("請輸入你的年紀"))
                 approveAgeRespond=True
@@ -247,7 +358,7 @@ def handle_postback(event):
             file='C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/plan_2day.csv'
             plan_data = pd.read_csv(file,encoding='utf-8-sig')
             userID = ML.XGboost_plan(plan_data,gender_1,age_1)  
-            print(userID,gender,age)
+            print(userID,gender_1,age_1)
             Filter.filter(file,userID)
             Plan2MYSQL.plan2mysql('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/plan.csv')
 

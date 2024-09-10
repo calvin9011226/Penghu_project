@@ -129,6 +129,47 @@ def XGboost_recommend3(arr,gender,age,tidal,temperature):
     result = le.inverse_transform(predicted)
     return result[0]
 
+
+def XGboost_classification(arr,gender,age,tidal,temperature):   #把景點和餐廳從推薦景點中分開
+    le = LabelEncoder()
+    labelencoder = LabelEncoder()
+    tree_deep = 100 #可理解成epoch
+    learning_rate = 0.3
+    
+    Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/test/Sustainable/locations_Attractions.csv',encoding='utf-8-sig')
+    df_data = pd.DataFrame(data= np.c_ [Data['weather'], Data['gender'], Data['age'] ,Data['tidal'],Data['temperature'],Data['設置點']],
+                           columns= ['weather','gender','age','tidal','temperature','label'])
+    #轉換文字要做one-hot encode前要先做label encode
+    df_data['weather'] = labelencoder.fit_transform(df_data['weather'])
+    # 移除label並取得剩下欄位資料
+    X = df_data.drop(labels=['label'],axis=1).values 
+
+    onehotencoder = OneHotEncoder(categories = 'auto',handle_unknown='ignore')
+    X=onehotencoder.fit_transform(X).toarray()    
+    Y = df_data['label'].values    
+    
+    # stratify=Y  -> 依据标签y，按原数据y中各类比例，分配给train和test，使得train和test中各类数据的比例与原数据集一样
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=42)
+    #由於字串無法做訓練，所以進行Label encoding編碼
+    Y_train = le.fit_transform(Y_train) 
+    #用同一個labelencoder能transform到一樣的編碼
+    arr_labelencode = labelencoder.transform(arr) 
+    Value_arr = np.array([arr_labelencode[0],gender,age,tidal,temperature])
+    #用同一個onehotencoder能transform到一樣的編碼
+    final=onehotencoder.transform([Value_arr]).toarray()
+    
+    xgboostModel = XGBClassifier(n_estimators=tree_deep, 
+                                 learning_rate= learning_rate,
+                                 )
+    xgboostModel.fit(X_train, Y_train)
+    xgboostModel.save_model('sustainable_Attractions.bin')
+    predicted = xgboostModel.predict([final[0]])
+    print('訓練集Accuracy: %.2f%% ' % (xgboostModel.score(X_train,Y_train) * 100.0))
+    result = le.inverse_transform(predicted)
+    return result[0]
+
+
+
 def XGboost_plan(plan_data,gender,age):
     le = LabelEncoder()
     tree_deep = 100 #可理解成epoch
@@ -174,3 +215,4 @@ arr = np.atleast_1d(arr)
 #print(XGboost_recommend1(arr,1,69))
 # print(XGboost_recommend2(arr,1,25,2,24))
 # print(XGboost_recommend3(arr,1,50,2,24))
+print(XGboost_classification(arr,1,50,2,24))

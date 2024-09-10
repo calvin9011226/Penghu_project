@@ -112,6 +112,65 @@ def XGboost_recommend3(arr,gender,age,tidal,temperature):
     return result[0]
 
 
+
+
+def XGboost_classification(arr,gender,age,tidal,temperature,arr_msg): #把景點和餐廳從推薦景點中分開
+    le = LabelEncoder()
+    labelencoder = LabelEncoder()
+
+    if arr_msg == ['永續景點']:
+        print("arr_msg =" ,arr_msg)
+        Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/test/Sustainable/locations_Attractions.csv',encoding='utf-8-sig')
+        loaded_model = XGBClassifier()
+        loaded_model.load_model('sustainable_Attractions.bin')
+
+    if arr_msg == ['一般景點']:
+        print("arr_msg =" ,arr_msg)
+        Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/test/non Sustainable/penghu_Attractions.csv',encoding='utf-8-sig')
+        loaded_model = XGBClassifier()
+        loaded_model.load_model('non_sustainable_attraction.bin')
+
+    if arr_msg == ['永續餐廳']:
+        print("arr_msg =" ,arr_msg)
+        Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/test/Sustainable/locations_non_Attractions.csv',encoding='utf-8-sig')
+        loaded_model = XGBClassifier()
+        loaded_model.load_model('sustainable_non_Attractions.bin')
+
+    if arr_msg == ['一般餐廳']:
+        print("arr_msg =" ,arr_msg)
+        Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/test/non Sustainable/penghu_non_Attractions.csv',encoding='utf-8-sig')
+        loaded_model = XGBClassifier()
+        loaded_model.load_model('non_sustainable_non_Attractions.bin')
+
+    # Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/test/non Sustainable/penghu_Attractions.csv',encoding='utf-8-sig')
+    df_data = pd.DataFrame(data= np.c_ [Data['weather'], Data['gender'], Data['age'] ,Data['tidal'],Data['temperature'],Data['設置點']],
+                           columns= ['weather','gender','age','tidal','temperature','label'])
+        
+    df_data['weather'] = labelencoder.fit_transform(df_data['weather'])#轉換文字要做one-hot encode前要先做label encode
+
+    X = df_data.drop(labels=['label'],axis=1).values # 移除label並取得剩下欄位資料
+
+    # onehotencoder = OneHotEncoder(categories = 'auto',handle_unknown='ignore')
+    onehotencoder = OneHotEncoder(categories = 'auto',handle_unknown='ignore')
+    X=onehotencoder.fit_transform(X).toarray()    
+    Y = df_data['label'].values    
+        
+        
+    Y = le.fit_transform(Y) #由於字串無法做訓練，所以進行Label encoding編碼
+    arr_labelencode = labelencoder.transform(arr) #用同一個labelencoder能transform到一樣的編碼
+
+    Value_arr = np.array([arr_labelencode[0],gender,age,tidal,temperature])
+    print("Value_arr :'weather','gender','age','tidal','temperature'= ",Value_arr)
+    final=onehotencoder.transform([Value_arr])#用同一個onehotencoder能transform到一樣的編碼
+    predicted = loaded_model.predict(final)
+    
+    result = le.inverse_transform(predicted)
+    print(result[0])
+    return result[0]
+
+
+
+
 #arr = np.array("風")
 #arr = np.atleast_1d(arr)
 #print(XGboost_recommend2(arr,1,25,2,24))
@@ -127,3 +186,4 @@ tidal = randrange(0,3)
 # print(XGboost_recommend2(arr,gender,age,tidal,temperature))
 print(arr,gender,age,tidal,temperature)
 # print(XGboost_recommend3(arr,gender,age,tidal,temperature))
+# print(XGboost_classification(arr,1,50,2,24,['永續景點']))
