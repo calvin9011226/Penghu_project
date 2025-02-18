@@ -27,7 +27,10 @@ import get_location
 import plan_location
 import PH_Attractions
 import urllib.parse
-
+import time
+import googlemaps
+import populartimes  # 第三方模組，用來解析熱門時段資料
+from linebot.models import TextSendMessage
 
 app = Flask(__name__)
 
@@ -35,7 +38,7 @@ access_token = 'h/47RBzNDXh5jWXncB7rZ1GPYKG15fDyuCewrJEJ8Q314NL732t6hQo+Oql/hM/J
 secret = '1bf0051081f4240f32595d32d374b04c'
 line_bot_api = LineBotApi(access_token)              # 確認 token 是否正確
 handler = WebhookHandler(secret)                     # 確認 secret 是否正確
-PHP_ngrok ="https://e561-140-115-154-208.ngrok-free.app"# 80
+PHP_ngrok ="https://723e-123-241-68-148.ngrok-free.app"# 80
 global age_1 ,gender_1
 
 # Google 表單的 URL
@@ -122,7 +125,7 @@ def linebot():
                 age = randrange(15,55)
                 print(arr,gender_1,age_1,tidal,temperature)
                 recommend = ML.XGboost_recommend3(arr,gender_1,age_1,tidal,temperature)
-                print(recommend) #推薦的地點是從XGBOOST_predicted來的
+                print(recommend) #推薦的地點是從XGboost_recommend3來的
                 recommend_website,recommend_imgur,recommend_map = PH_Attractions.Attractions_recommend1(recommend)#圖片,網址,map是從PH_Attractions來的
                 line_bot_api.reply_message(tk,[TextSendMessage("感謝等待\n系統以AI大數據機器學習的方式推薦以下適合您的地點"),
                                                       TextSendMessage(str(recommend)),
@@ -212,7 +215,7 @@ def linebot():
                 #其他錯誤
                 except Exception as e:
                     print("age type error", age)
-                    line_bot_api.reply_message(tk,TextSendMessage("請輸入\"正確年紀\""))
+                    line_bot_api.reply_message(tk,TextSendMessage("請輸入\"正確年紀\""))  
                  
             else :
                 print(msg)                                       # 印出內容
