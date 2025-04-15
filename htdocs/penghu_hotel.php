@@ -157,7 +157,7 @@
         
     </script>
          <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa5Ww5XHTu4cJCSSfZaxf1GGUTHyyYIx0&callback=initMap"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa5Ww5XHTu4cJCSSfZaxf1GGUTHyyYI&callback=initMap"
       async
     ></script>
 

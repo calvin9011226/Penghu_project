@@ -72,6 +72,7 @@ def tidal():
     c2 = b1[3].text.split(':')
     low_min1 = int(c2[0])*60+int(c2[1])
     #print(low_min1)
+    #print("high_min1",high_min1,"low_min1",low_min1)
 
     #判斷是否有兩個滿潮
     flag = b1[0].get("rowspan")

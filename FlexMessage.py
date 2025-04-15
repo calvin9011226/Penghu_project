@@ -12,29 +12,71 @@ from linebot.models import *
 #from xgboost import XGBClassifier
 import csv
 import Search
+import urllib.parse
+import googlemaps
 
-access_token = 'h/47RBzNDXh5jWXncB7rZ1GPYKG15fDyuCewrJEJ8Q314NL732t6hQo+Oql/hM/Jn02uU2jCv36wlnPP6XP4p5HG9nUiYfAndRecgTlf2LlQ19m9bc7/Fc3MuguAw0IRCzUiHJjco7gdD1DSD1G2TwdB04t89/1O/w1cDnyilFU='
-secret = '1bf0051081f4240f32595d32d374b04c'
+GOOGLE_API_KEY = "AIzaSyBkBeV2pKxDvLzQmcCe1X6jkqWMFhVXiuI"
+
+access_token = 'Lw2nJ8Dx7FfPEkMMWu2qmivQGp7/Z8/ZR0Yww4JO6SAWGVMu6AaJeO0dDSf+4RsrJWDy5d6rMcGU3gVd0/Qz/Tgu3kQR2bOothKf6CgyvlN2DqdoLi1Zt704CRjXEOLMV3z+3jsz25NfXBK7urHgWAdB04t89/1O/w1cDnyilFU='
+secret = '3f0e6c03c17e4b5227013e377aa3d335'
+
+access_token ='8t9DHPiFfaFwRydxpxoIDJyrx5hGCFzkx9yOXZjfPrRDyCz6L5OzbNdnmyDMoQHWK8OJwgZGXGGcFFJsdpvbQxnO+CeGIiZCpC0vDIidLlNjSg2cT9izc/EEGDx5QKlLuY3MKJ8Nx7eNwiDx6ovowgdB04t89/1O/w1cDnyilFU='
+secret ='61817b103d71c88675dbbc247f03feb2'
 line_bot_api = LineBotApi(access_token)              # 確認 token 是否正確
 handler = WebhookHandler(secret)                     # 確認 secret 是否正確
 
+
+# 新增全域變數 option2，用來記錄使用者選擇的路線類型
+option2 = None
+
+def ask_route_option():
+    """建立 Flex Message 讓使用者選擇『系統路線』或『使用者路線』"""
+    bubble = BubbleContainer(
+        direction="ltr",
+        body=BoxComponent(
+            layout="vertical",
+            contents=[
+                TextComponent(text="請選擇您要的路線", size="xl", color="#000000", align="center")
+            ]
+        ),
+        footer=BoxComponent(
+            layout="vertical",
+            spacing="xs",
+            contents=[
+                ButtonComponent(
+                    style="primary",
+                    action=PostbackAction(label="系統路線", text="系統路線", data="系統路線")
+                ),
+                ButtonComponent(
+                    style="primary",
+                    action=PostbackAction(label="使用者路線", text="使用者路線", data="使用者路線")
+                )
+            ]
+        )
+    )
+    return FlexSendMessage(alt_text="選擇路線", contents=bubble)
+
+
+# ----------------------------
 #詢問旅遊天數
 def travel_reply(Title,label1,text1,data1,label2,text2,data2,label3,text3,data3,label4,text4,data4):
     body = request.get_data(as_text=True)                    # 取得收到的訊息內容
+    #print("body:",body)
     try:
         json_data = json.loads(body)                         # json 格式化訊息內容
         signature = request.headers['X-Line-Signature']      # 加入回傳的 headers
         handler.handle(body, signature)                      # 綁定訊息回傳的相關資訊
         tk = json_data['events'][0]['replyToken']            # 取得回傳訊息的 Token
-        
+
         bubble = BubbleContainer(
             direction='ltr',
             #最上層
             hero=ImageComponent(
-                    url='https://i.imgur.com/o2S08In.png',
+                    #url='https://i.imgur.com/o2S08In.png',
+                    url='https://i.imgur.com/OewR6v5.png',
                     size='full',
                     aspect_ratio='2:1',
-                    aspect_mode='cover',
+                    aspect_mode='cover'
             ),
             #中間層
             body=BoxComponent(
@@ -170,6 +212,14 @@ def ask_location():
             ),
         )
         message=FlexSendMessage(alt_text="請傳送位置資訊",contents=bubble)
+        # 加入 Quick Reply 按鈕，使用 LocationAction 讓使用者傳送位置
+        message.quick_reply = QuickReply(
+            items=[
+                QuickReplyButton(
+                    action=LocationAction(label="傳送位置")     #啟動line內建的傳送位置的功能
+                )
+            ]
+        )
         return message
     except:
          line_bot_api.reply_message(tk,TextSendMessage("發生錯誤"))
@@ -218,7 +268,9 @@ def ask_keyword():
                                         spacing='xs',
                                         contents= [
                                             ImageComponent(
-                                                url = "https://th.bing.com/th/id/OIP.bz7UqgUAkIQZ_l5BA8WQ0AHaHa?pid=ImgDet&w=512&h=512&rs=1",
+                                                #url = "https://th.bing.com/th/id/OIP.bz7UqgUAkIQZ_l5BA8WQ0AHaHa?pid=ImgDet&w=512&h=512&rs=1",
+                                                url ="https://i.imgur.com/0H0JmYX.png",
+                                                
                                                 aspectRatio = "1:1",
                                                 aspectMode = "cover",
                                                 size = "md"
@@ -309,7 +361,9 @@ def recommend(name,price_level,rating,img_url,location,place_id):
     #web_url,img_url,map_url = Search.Attractions_recommend(name)
     component=Rating_Component(rating)
     try:
-        map_url=f'https://www.google.com/maps/place/?q=place_id:{place_id}'
+        #map_url=f'https://www.google.com/maps/place/?q=place_id:{place_id}' #舊的搜尋方法
+        map_url = f'https://www.google.com/maps/search/?api=1&query={urllib.parse.quote(name)}'
+        #print("Google Maps URL:", map_url) #確認google地址可不可以使用
     except Exception:
         map_url="no information"
     try:
@@ -352,7 +406,7 @@ def recommend(name,price_level,rating,img_url,location,place_id):
                         height='sm',
                         action=URIAction(
                             label='地圖',
-                            uri=map_url  # 設定要跳轉的網頁連結
+                            uri=map_url,  # 設定要跳轉的網頁連結
                         )
                     )
                 ]    

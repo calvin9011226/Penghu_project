@@ -43,13 +43,13 @@ def XGboost_recommend1():
 def XGboost_recommend2():
     le = LabelEncoder()
     labelencoder = LabelEncoder()
-    tree_deep = 100 #可理解成epoch
+    tree_deep = 300 #可理解成epoch
     learning_rate = 0.3
         
-    Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/penghu_orignal2.csv',encoding='utf-8-sig')
+    Data = pd.read_csv('./penghu_csv_file/penghu_orignal2.csv',encoding='utf-8-sig')
     df_data = pd.DataFrame(data= np.c_ [Data['weather'], Data['gender'], Data['age'] ,Data['tidal'],Data['temperature'],Data['設置點']],
                            columns= ['weather','gender','age','tidal','temperature','label'])
-        
+    print(df_data)
     df_data['weather'] = labelencoder.fit_transform(df_data['weather'])#轉換文字要做one-hot encode前要先做label encode
 
     X = df_data.drop(labels=['label'],axis=1).values # 移除label並取得剩下欄位資料
@@ -68,6 +68,13 @@ def XGboost_recommend2():
 
     xgboostModel = XGBClassifier(n_estimators=tree_deep, learning_rate= learning_rate)
     xgboostModel.fit(X_train, Y_train)
+    
+    # 列出 One-Hot Encoding 的特徵名稱
+    feature_names = np.hstack(onehotencoder.categories_)  # 獲取所有類別名稱
+    feature_names = [str(name) for name in feature_names]  # 轉換成字串列表
+    for i, name in enumerate(feature_names):
+        print(f"f{i} -> {name}")
+    
 
     # 儲存模型
     xgboostModel.save_model('xgb_model2_test1.bin')
@@ -106,5 +113,5 @@ def XGboost_recommend3():
     xgboostModel.save_model('xgb_model3.bin')
 
 #XGboost_recommend1()
-# XGboost_recommend2()
-XGboost_recommend3()
+XGboost_recommend2()
+#XGboost_recommend3()

@@ -33,3 +33,10 @@ ngrok 的指令要下 ngrok start --all，就能透過 [ngrok網址]/XXX.php 進
 imgur 禁止了 127.0.0.1 的訪問，所以要測試要用輸入 localhost 不能用 127.0.0.1。
 
 請先安裝 requirement.txt 的套件 pip install -r requirements.txt
+
+
+產生圖片:http://localhost:5000/generate-timeline
+
+#啟動虛擬機
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser 
+Venv38\Scripts\activate # Windows

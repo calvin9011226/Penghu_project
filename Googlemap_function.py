@@ -8,12 +8,16 @@ import datetime
 import csv
 import pymysql
 
+api_key = "AIzaSyAlrONk6sDRUMmEkkjAsYxfuPvMVz7wSls"
+#api_key ="AIzaSyBkBeV2pKxDvLzQmcCe1X6jkqWMFhVXiuI"
+path="./penghu_csv_file"
+
 def googlemap_search(lat,lng):
     #get api key
     #config=configparser.ConfigParser()
     #config.read('information.ini')
     #gmaps=googlemaps.Client(key=config.get('googlemap','api_key'))
-    gmaps=googlemaps.Client(key="AIzaSyAlrONk6sDRUMmEkkjAsYxfuPvMVz7wSls")
+    gmaps=googlemaps.Client(key=api_key)
     #change to dictionary
     loc={'lat':lat,'lng':lng}
     #搜尋2km裡的民宿
@@ -53,7 +57,7 @@ def googlemap_search(lat,lng):
 
 
 
-    with open('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/hotel_data.csv','w+',newline='',encoding='utf-8-sig')as csvfile:
+    with open(f'{path}/hotel_data.csv','w+',newline='',encoding='utf-8-sig')as csvfile:
         writer=csv.writer(csvfile)
         writer.writerow(["hotel_name","latitude","longitude"])
         for x,y,z in zip (name_list,latitude_list,longtitude_list) :
@@ -70,8 +74,8 @@ def googlemap_search_nearby(lat,lng,keyword):
     #config=configparser.ConfigParser()
     #config.read('information.ini')
     #gmaps=googlemaps.Client(key=config.get('googlemap','api_key'))
-    api_key = "AIzaSyAlrONk6sDRUMmEkkjAsYxfuPvMVz7wSls"
-    gmaps=googlemaps.Client(key="AIzaSyAlrONk6sDRUMmEkkjAsYxfuPvMVz7wSls")
+    api_key = "AIzaSyBkBeV2pKxDvLzQmcCe1X6jkqWMFhVXiuI"
+    gmaps=googlemaps.Client(key=api_key)
     #change to dictionary
     loc={'lat':lat,'lng':lng}
     rad=2000
@@ -80,12 +84,13 @@ def googlemap_search_nearby(lat,lng,keyword):
     placeID_list=[]
     for place in gmaps.places_nearby(keyword=keyword,radius=rad,location=loc)['results']:
         placeID_list.append(place['place_id'])
+    print("placeID_list:",placeID_list)
 
     hotel_info=[]
     for id in placeID_list:
         hotel_info.append(gmaps.place(place_id=id,language="zh-TW")['result'])
         sleep(0.1)
-        
+    print("hotel_info:",hotel_info)   
     search_list=[]
     
     maxwidth=800
@@ -101,6 +106,7 @@ def googlemap_search_nearby(lat,lng,keyword):
             img_url=f'https://maps.googleapis.com/maps/api/place/photo?maxwidth={maxwidth}&photoreference={photoreference}&key={api_key}'
         except Exception:
             img_url="https://th.bing.com/th/id/R.409832a9886d51eb28e38d9f5a312cb9?rik=RoSWoLpVeJgp5A&riu=http%3a%2f%2fwww.allsense.com.tw%2fshopt%2fimages%2fs1%2fnotImg_.jpg&ehk=kZLbCtiT8lwcptfA4NEyrgaZmtH4XxJxWI8voOSAdfs%3d&risl=&pid=ImgRaw&r=0"
+        #print(h)
         try:
             price_level=h['price_level']
         except Exception:
@@ -119,7 +125,7 @@ def googlemap_search_nearby(lat,lng,keyword):
              'place_id':h["place_id"]}
         search_list.append(dic)
         
-    with open('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/recommend.csv','w+',newline='',encoding='utf-8-sig')as csvfile:
+    with open(f'{path}/recommend.csv','w+',newline='',encoding='utf-8-sig')as csvfile:
         writer=csv.writer(csvfile)
         writer.writerow(['name','price_level','rating','img_url','location','place_id'])
         search_list = sorted(search_list,key=lambda row:float(row["rating"]), reverse=True)#由高到低排序
@@ -133,8 +139,8 @@ def googlemap_search_hotel(lng,lat):
     #config=configparser.ConfigParser()
     #config.read('information.ini')
     #gmaps=googlemaps.Client(key=config.get('googlemap','api_key'))
-    api_key = "AIzaSyAlrONk6sDRUMmEkkjAsYxfuPvMVz7wSls"
-    gmaps=googlemaps.Client(key="AIzaSyAlrONk6sDRUMmEkkjAsYxfuPvMVz7wSls")
+    #api_key = "AIzaSyAlrONk6sDRUMmEkkjAsYxfuPvMVz7wSls"
+    gmaps=googlemaps.Client(key=api_key)
     #change to dictionary
     loc={'lat':lat,'lng':lng}
     #搜尋2km裡的民宿
@@ -181,7 +187,7 @@ def googlemap_search_hotel(lng,lat):
 
 
 
-    with open('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/hotel_data.csv','w+',newline='',encoding='utf-8-sig')as csvfile:
+    with open(f'{path}/hotel_data.csv','w+',newline='',encoding='utf-8-sig')as csvfile:
         writer=csv.writer(csvfile)
         writer.writerow(["hotel_name","latitude","longitude","url"])
         for x,y,z,w in zip (name_list,latitude_list,longtitude_list,url_list) :

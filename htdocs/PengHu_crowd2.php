@@ -23,10 +23,13 @@
   if (!mysqli_select_db($conn, $DB_NAME)) {
     die("連接失敗" );
   }
+
+
     $result = mysqli_query($conn, $DB_PAGE);
     //使用函數 mysqli_query 通過給定的數據庫連接 $conn 對數據庫執行 SQL 查詢。
     // 執行查詢的結果存儲在變量 $result 中。
     //第二個參數 $DB_PAGE 表示我們要在數據庫上執行的 SQL 查詢。
+
     while ($row = mysqli_fetch_array($result, MYSQLI_BOTH)) 
     {
       $no[$i]=$row['no'];
@@ -167,7 +170,7 @@
             }
     </script>
     <script async
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAlrONk6sDRUMmEkkjAsYxfuPvMVz7wSls&libraries=visualization&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDoQ5qWGj6bAcj7N3cmQN771F4yiyNtv-8&libraries=visualization&callback=initMap">
 </script>
 <footer>
         <p>© PSRS.</p>

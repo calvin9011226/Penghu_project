@@ -1,7 +1,8 @@
 //本支程式查找userID做景點規劃
 <?php
 // 開啟 CSV 檔案
-$file = fopen('C:/Users/roy88/testproject/python/PH/plan.csv', 'r');
+
+$file = fopen('./penghu_csv_file/plan.csv', 'r');
 $i=0;
 $latitude=array();
 $longitude=array();
@@ -130,7 +131,7 @@ fclose($file);
     }
     </script>
          <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa5Ww5XHTu4cJCSSfZaxf1GGUTHyyYIx0&callback=initMap"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkBeV2pKxDvLzQmcCe1X6jkqWMFhVXiuI&callback=initMap"
       async
     ></script>
 

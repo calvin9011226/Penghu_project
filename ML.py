@@ -4,13 +4,15 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
+path="./penghu_csv_file"
+
 def XGboost_recommend1(arr,gender,age):    
     le = LabelEncoder()
     labelencoder = LabelEncoder()
     tree_deep = 100 #可理解成epoch
     learning_rate = 0.3
     
-    Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/penghu_orignal2.csv',encoding='utf-8-sig')
+    Data = pd.read_csv(f'{path}/penghu_orignal2.csv',encoding='utf-8-sig')
     df_data = pd.DataFrame(data= np.c_ [Data['weather'], Data['gender'], Data['age'], Data['設置點']],
                            columns= ['weather','gender','age','label'])
     
@@ -46,15 +48,17 @@ def XGboost_recommend1(arr,gender,age):
     
     return predicted,result
 
-def XGboost_recommend2(arr,gender,age,tidal,temperature):    
+def XGboost_recommend2(arr,gender,age,tidal,temperature,dont_go_here):    
     le = LabelEncoder()
     labelencoder = LabelEncoder()
     tree_deep = 100 #可理解成epoch
     learning_rate = 0.3
     
-    Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/penghu_orignal2.csv',encoding='utf-8-sig')
+    Data = pd.read_csv(f'{path}/penghu_orignal2.csv',encoding='utf-8-sig')
     df_data = pd.DataFrame(data= np.c_ [Data['weather'], Data['gender'], Data['age'] ,Data['tidal'],Data['temperature'],Data['設置點']],
                            columns= ['weather','gender','age','tidal','temperature','label'])
+    df_data = df_data[~df_data['label'].isin(dont_go_here)]     # 這個會去判斷是否為不推薦名單,並不讓他進入機器學習
+    
     #轉換文字要做one-hot encode前要先做label encode
     df_data['weather'] = labelencoder.fit_transform(df_data['weather'])
     # 移除label並取得剩下欄位資料
@@ -91,15 +95,18 @@ def XGboost_recommend2(arr,gender,age,tidal,temperature):
     
     return result[0]
 
-def XGboost_recommend3(arr,gender,age,tidal,temperature):    
+def XGboost_recommend3(arr,gender,age,tidal,temperature,dont_go_here):    
     le = LabelEncoder()
     labelencoder = LabelEncoder()
     tree_deep = 100 #可理解成epoch
     learning_rate = 0.3
     
-    Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/generated_data_updated1.csv',encoding='utf-8-sig')
+    Data = pd.read_csv(f'{path}/generated_data_updated1.csv',encoding='utf-8-sig')
     df_data = pd.DataFrame(data= np.c_ [Data['weather'], Data['gender'], Data['age'] ,Data['tidal'],Data['temperature'],Data['設置點']],
                            columns= ['weather','gender','age','tidal','temperature','label'])
+    df_data = df_data[~df_data['label'].isin(dont_go_here)]     # 這個會去判斷是否為不推薦名單,並不讓他進入機器學習
+
+   
     #轉換文字要做one-hot encode前要先做label encode
     df_data['weather'] = labelencoder.fit_transform(df_data['weather'])
     # 移除label並取得剩下欄位資料
@@ -115,7 +122,7 @@ def XGboost_recommend3(arr,gender,age,tidal,temperature):
     Y_train = le.fit_transform(Y_train) 
     #用同一個labelencoder能transform到一樣的編碼
     arr_labelencode = labelencoder.transform(arr) 
-    Value_arr = np.array([arr_labelencode[0],gender,age,tidal,temperature])
+    Value_arr = np.array([arr_labelencode[0],gender,age,tidal,temperature], dtype=object)
     #用同一個onehotencoder能transform到一樣的編碼
     final=onehotencoder.transform([Value_arr]).toarray()
     
@@ -136,7 +143,7 @@ def XGboost_classification(arr,gender,age,tidal,temperature):   #把景點和餐
     tree_deep = 100 #可理解成epoch
     learning_rate = 0.3
     
-    Data = pd.read_csv('C:/Users/wkao_/Desktop/NCLab/penghu project/penghu_csv_file/test/Sustainable/locations_Attractions.csv',encoding='utf-8-sig')
+    Data = pd.read_csv(f'{path}/test/Sustainable/locations_Attractions.csv',encoding='utf-8-sig')
     df_data = pd.DataFrame(data= np.c_ [Data['weather'], Data['gender'], Data['age'] ,Data['tidal'],Data['temperature'],Data['設置點']],
                            columns= ['weather','gender','age','tidal','temperature','label'])
     #轉換文字要做one-hot encode前要先做label encode
@@ -214,5 +221,6 @@ arr = np.array("晴")
 arr = np.atleast_1d(arr)
 #print(XGboost_recommend1(arr,1,69))
 # print(XGboost_recommend2(arr,1,25,2,24))
-# print(XGboost_recommend3(arr,1,50,2,24))
+#dont_go_here=["澎湖七美莫咖啡 More Coffee","離島出走 Isle Travel","鄭家莊｜澎湖七美民宿","南寮風車有機農場｜風島物產","撒野旅店 Say Yeah Inn"]
+#print(XGboost_recommend3(arr,1,50,2,25,dont_go_here))
 # print(XGboost_classification(arr,1,50,2,24))

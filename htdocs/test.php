@@ -3,7 +3,7 @@
 // route_finder.php
 
 // 確保設置了您的Google Maps API密鑰
-$api_key = 'AIzaSyAlrONk6sDRUMmEkkjAsYxfuPvMVz7wSls';
+$api_key = 'AIzaSyBkBeV2pKxDvLzQmcCe1X6jkqWMFhVXiuI';
 
 // 獲取用戶輸入
 $destination = isset($_GET['destination']) ? $_GET['destination'] : '';
